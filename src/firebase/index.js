@@ -1,6 +1,7 @@
-import { initializeApp, auth as authFire, apps } from 'firebase/app';
+import { initializeApp, auth as authFire, apps, firestore } from 'firebase/app';
 import 'firebase/app'
 import 'firebase/auth'
+import 'firebase/firestore'
 import { errFirebase } from "./message";
 
 const config = {
@@ -12,13 +13,19 @@ const config = {
   messagingSenderId: "873632175371"
 };
 
+const settings = { timestampsInSnapshots: true };
+
+
 if (!apps.length) {
   initializeApp(config);
 }
 
 const auth = authFire();
+const db = firestore()
+db.settings(settings);
 
 export {
   auth,
   errFirebase,
+  db,
 };

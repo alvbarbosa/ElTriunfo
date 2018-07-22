@@ -20,7 +20,6 @@ class Start extends React.Component {
 
   componentDidMount = () => {
     auth.onAuthStateChanged(user => {
-      console.log(user);
       if (user) {
         fakeAuth.authenticate()
       } else {
