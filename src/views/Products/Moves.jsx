@@ -29,6 +29,7 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 
 import { db } from "../../firebase";
+import { toDatePicker } from "utils";
 
 const actionsStyles = theme => ({
   root: {
@@ -73,7 +74,7 @@ let Filter = props => {
               label="Fecha Inicial"
               type="date"
               className={classes.textField}
-              value={initialDate.toISOString().slice(0, 10)}
+              value={toDatePicker(initialDate.toDate())}
               onChange={handleChange}
               InputLabelProps={{
                 shrink: true,
@@ -86,7 +87,7 @@ let Filter = props => {
               label="Fecha Final"
               type="date"
               className={classes.textField}
-              value={finalDate.toISOString().slice(0, 10)}
+              value={toDatePicker(finalDate.toDate())}
               onChange={handleChange}
               InputLabelProps={{
                 shrink: true,

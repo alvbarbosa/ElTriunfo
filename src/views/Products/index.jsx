@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -9,15 +8,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 // import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import ErrorIcon from "@material-ui/icons/ErrorOutline";
-import { lighten } from '@material-ui/core/styles/colorManipulator';
 import ViewList from "@material-ui/icons/ViewList";
 import Button from "components/CustomButtons/Button.jsx";
 import Snackbar from "components/Snackbar/Snackbar.jsx";
@@ -89,61 +85,6 @@ EnhancedTableHead.propTypes = {
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
 };
-
-const toolbarStyles = theme => ({
-  root: {
-    paddingRight: theme.spacing.unit,
-  },
-  highlight:
-    theme.palette.type === 'light'
-      ? {
-        color: theme.palette.secondary.main,
-        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-      }
-      : {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.secondary.dark,
-      },
-  spacer: {
-    flex: '1 1 100%',
-  },
-  actions: {
-    color: theme.palette.text.secondary,
-  },
-  title: {
-    flex: '0 0 auto',
-  },
-});
-
-let EnhancedTableToolbar = props => {
-  const { classes } = props;
-
-  return (
-    <Toolbar
-      className={classNames(classes.root)}
-    >
-      <div className={classes.title}>
-        <Typography variant="title" id="tableTitle">
-          Productos
-          </Typography>
-      </div>
-      <div className={classes.spacer} />
-      <div className={classes.actions}>
-        <Tooltip title="Agregar producto">
-          <IconButton onClick={() => props.handlerButtonAddProduct()} aria-label="Agregar producto">
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
-      </div>
-    </Toolbar>
-  );
-};
-
-EnhancedTableToolbar.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 
 const styles = theme => ({
   root: {
@@ -349,9 +290,6 @@ class Products extends React.Component {
             </div>
           </CardHeader>
           <CardBody>
-            {/* <EnhancedTableToolbar
-              handlerButtonAddProduct={this.handlerButtonModify}
-            /> */}
             <div className={classes.tableWrapper}>
               <Table className={classes.table} aria-labelledby="tableTitle">
                 <EnhancedTableHead

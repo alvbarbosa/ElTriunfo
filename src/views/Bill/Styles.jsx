@@ -41,6 +41,13 @@ export const styles = theme => ({
       marginRight: "3px"
     }
   },
+  root: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+  },
+  tableWrapper: {
+    overflowX: document.documentElement.clientWidth > 1170 ? 'none' : 'auto',
+  },
 });
 
 const ITEM_HEIGHT = 48;
@@ -56,6 +63,20 @@ export const billStyles = theme => ({
   },
   table: {
     marginTop: '50px'
+  },
+  button: {
+    width: '35px',
+    height: '35px',
+  },
+  cellOption: {
+    width: '70px',
+    minWidth: '70px'
+  },
+  iconOption: {
+    fontSize: '20px'
+  },
+  row:{
+    height: 'auto'
   },
   // We had to use a lot of global selectors in order to style react-select.
   // We are waiting on https://github.com/JedWatson/react-select/issues/1679
@@ -156,3 +177,63 @@ export const billStyles = theme => ({
     },
   },
 });
+
+export const listStyles = theme => ({
+  root1: {
+    flexShrink: 0,
+    color: theme.palette.text.secondary,
+    marginLeft: theme.spacing.unit * 2.5,
+  },
+  containerFilter: {
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    width: 200,
+  },
+  formControl: {
+    minWidth: 120,
+    marginTop: -2,
+  },
+  root: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+  },
+  tableWrapper: {
+    overflowX: document.documentElement.clientWidth > 1170 ? 'none' : 'auto',
+  },
+  cardCategory: {
+    color: "#999999",
+    margin: "0",
+    fontSize: "14px",
+    marginTop: "0",
+    marginBottom: "3px",
+  },
+  cardTitle: {
+    marginBottom: "0",
+    paddingTop: "10px",
+    color: "#3C4858",
+    marginTop: "0px",
+    minHeight: "auto",
+    fontWeight: "300",
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    textDecoration: "none",
+    "& small": {
+      color: "#777",
+      fontSize: "65%",
+      fontWeight: "400",
+      lineHeight: "1"
+    }
+  },
+  progress: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: "100vh",
+  },
+  row: {
+    height: 'auto'
+  },
+})

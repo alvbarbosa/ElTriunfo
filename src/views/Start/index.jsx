@@ -9,13 +9,15 @@ import {
 
 import LoginPage from "views/LoginPage/LoginPage.jsx";
 import Dashboard from "layouts/Dashboard/Dashboard.jsx";
+import StartPage from "./Start"
 import { auth } from "../../firebase";
 
 const hist = createBrowserHistory();
 
 class Start extends React.Component {
   state = {
-    auth: false
+    auth: false,
+    loading: true,
   }
 
   componentDidMount = () => {
@@ -25,11 +27,13 @@ class Start extends React.Component {
       } else {
         fakeAuth.signout()
       }
+      this.setState({ loading: false })
       this.forceUpdate()
     })
   }
 
   render() {
+    if (this.state.loading) return <StartPage />
     return (
       <Router history={hist}>
         <Switch>

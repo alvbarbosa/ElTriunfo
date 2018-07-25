@@ -281,7 +281,7 @@ class Clients extends React.Component {
                           <TableCell>{n.address}</TableCell>
                           <TableCell>{n.phone}</TableCell>
                           <TableCell>
-                            <Button onClick={() => this.handlerButtonModify(n)} color="primary" round>Modificar</Button>
+                            <Button size="sm" onClick={() => this.handlerButtonModify(n)} color="primary" round>Modificar</Button>
                           </TableCell>
                         </TableRow>
                       );

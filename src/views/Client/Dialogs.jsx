@@ -18,7 +18,7 @@ export default props => {
         <DialogTitle id="form-dialog-title1">
           {
             props.add
-              ? "Agregar Client"
+              ? "Agregar Cliente"
               : "Modificar"
           }
         </DialogTitle>
