@@ -41,5 +41,7 @@
   "bugs": {
     "url": "https://github.com/alvbarbosa/ElTriunfo/issues"
   },
-  "homepage": "https://github.com/alvbarbosa/ElTriunfo"
+  "devDependencies": {
+    "react-to-print": "^2.0.0-alpha-1"
+  }
 }

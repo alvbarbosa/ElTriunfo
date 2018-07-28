@@ -1,5 +1,73 @@
+.section-print {
+  display: none
+}
+.row-bill {
+  height: auto;
+}
+
+@page {
+  margin: 5%;
+}
+
 @media print {
-  body * { visibility: hidden; }
-  #printcontent * { visibility: visible; }
-  #printcontent { position: absolute; top: 40px; left: 30px; }
+  .section-print {
+    display: initial;
+  }
+  .subpage {
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    width: 100%;
+  }
+  header .title {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 15px;
+    align-items: flex-end;
+  }
+  .footer-text {
+    display: flex;
+    justify-content: space-around;
+    font-size: 8px;
+  }
+  .body {
+    flex: 1;
+  }
+  .line {
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  .bill-wrapper {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  .bill-number {
+    align-self: flex-end;
+  }
+  h6, h3, h4, h2, h5 {
+    margin: 0;
+    padding: 0;
+  }
+  .row-bill {
+    height: auto !important;
+    page-break-inside: avoid;
+  }
+  .table {
+    margin-top: 50px;
+  }
+  .firms {
+    margin-top: 70px;
+  }
+  .firms > div {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
 }

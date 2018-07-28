@@ -197,7 +197,8 @@ class Bill extends React.Component {
 
   handlerModifyItem = e => {
     e.preventDefault()
-    const { quantity, unitPrice, bill, price, product, idItem } = this.state
+    const { quantity, unitPrice, price, product, idItem } = this.state
+    const { bill } = this.props
     if (product && quantity && unitPrice) {
       db.collection('bills').doc(bill.key).collection('items').doc(idItem).set({
         product,
@@ -289,7 +290,7 @@ class Bill extends React.Component {
         </Grid>
         <Grid container>
           <Grid item xs={12} sm={12} md={12}>
-            <Table id="printcontent" className={classes.table}>
+            <Table className={classes.table}>
               <TableHead>
                 <TableRow>
                   <TableCell>Producto</TableCell>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment'
+import ReactToPrint from "react-to-print";
 import { withStyles } from '@material-ui/core/styles';
 import DescriptionIcon from "@material-ui/icons/Description";
 import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
@@ -17,6 +18,7 @@ import Danger from "components/Typography/Danger.jsx";
 import Snackbar from "components/Snackbar/Snackbar.jsx";
 import Bill from './Bill';
 import List from './List'
+import PrintBill from './Print';
 
 import { styles } from "./Styles";
 import { db } from "../../firebase";
@@ -44,19 +46,39 @@ const TitleBill = props => {
 }
 
 const ButtonHeader = props => {
-  const { bill, viewList, handleViewList, createBill, deleteBill, validateBill } = props
+  const {
+    bill,
+    viewList,
+    handleViewList,
+    createBill,
+    deleteBill,
+    validateBill,
+    items,
+    clients,
+    products,
+  } = props
   if (viewList) {
     return <Button onClick={createBill} size="sm" color="primary" round>Crear</Button>
   } else {
     return <div style={{ display: 'flex', justifyContent: 'space-between' }} >
       {bill.valid
-        ? <Button size="sm" color="primary" round>Imprimir</Button>
+        ? <ReactToPrint
+          trigger={() => <Button size="sm" color="primary" round>Imprimir</Button>}
+          content={() => this.componentRef}
+        />
         : <div>
           <Button onClick={validateBill} size="sm" color="primary" round>Validar</Button>
           <Button onClick={deleteBill} size="sm" round>Descartar</Button>
         </div>
       }
       <Button size="sm" color="primary" onClick={handleViewList} round>Lista Facturas</Button>
+      <PrintBill
+        ref={el => (this.componentRef = el)}
+        bill={bill}
+        client={clients.find(c => c.key === bill.client)}
+        items={items}
+        products={products}
+      />
     </div>
   }
 }
@@ -212,26 +234,26 @@ class Bills extends Component {
             return numberBill;
           });
         })
-        bill.valid = true
-        bill.number = numberBill
-        await this.setState({ loading: false, bill })
 
         this.showAlert(`Se creo la factura ${numberBill}`)
 
         let refItem = null
         let quantity = 0
-        items.forEach(item => {
-          quantity = parseInt(item.quantity, 10)
-          refItem = db.collection('products').doc(item.product)
-          db.runTransaction(transaction => {
-            return transaction.get(refItem).then(sfDoc => {
+        for (const key in items) {
+          if (items.hasOwnProperty(key)) {
+            const item = items[key];
+
+            quantity = parseInt(item.quantity, 10)
+            refItem = db.collection('products').doc(item.product)
+            await db.runTransaction(async transaction => {
+              const sfDoc = await transaction.get(refItem)
               if (!sfDoc.exists) {
                 throw new Error("Document does not exist!");
               }
 
               const total = sfDoc.data().total - quantity;
-              transaction.update(refItem, { total });
-
+              await transaction.update(refItem, { total });
+              console.log(item)
               db.collection('productsMov').add({
                 date: new Date(),
                 id: item.product,
@@ -239,9 +261,14 @@ class Bills extends Component {
                 total,
                 note: `Factura No. ${numberBill}`
               })
-            });
-          })
-        })
+              return transaction
+            })
+          }
+        }
+
+        bill.valid = true
+        bill.number = numberBill
+        await this.setState({ loading: false, bill })
       }
     } catch (error) {
       console.log("Transaction failed: ", error);
@@ -273,6 +300,11 @@ class Bills extends Component {
     }, 5000);
   }
 
+  handleViewList = () => {
+    this.closeBill()
+    this.setState({ viewList: true })
+  }
+
   render() {
     const { classes } = this.props
     const { products, clients, loading, items, bill, viewList, bills, iconSnack } = this.state
@@ -285,10 +317,13 @@ class Bills extends Component {
         <ButtonHeader
           viewList={viewList}
           bill={bill}
-          handleViewList={() => this.setState({ viewList: true })}
+          handleViewList={this.handleViewList}
           createBill={this.createBill}
           deleteBill={this.deleteBill}
           validateBill={this.validateBill}
+          items={items}
+          clients={clients}
+          products={products}
         />
         <Card>
           <CardHeader color="primary" icon>

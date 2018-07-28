@@ -202,7 +202,7 @@ const styles = theme => ({
   //   minWidth: 500,
   // },
   tableWrapper: {
-    overflowX: 'auto',
+    overflowX: document.documentElement.clientWidth > 1170 ? 'none' : 'auto',
   },
   cardCategory: {
     color: "#999999",
