@@ -29,15 +29,12 @@ class TablePaginationActions extends React.Component {
   handleFirstPageButtonClick = event => {
     this.props.onChangePage(event, 0);
   };
-
   handleBackButtonClick = event => {
     this.props.onChangePage(event, this.props.page - 1);
   };
-
   handleNextButtonClick = event => {
     this.props.onChangePage(event, this.props.page + 1);
   };
-
   handleLastPageButtonClick = event => {
     this.props.onChangePage(
       event,
@@ -97,12 +94,13 @@ const TablePaginationActionsWrapped = withStyles(listStyles, { withTheme: true }
 );
 
 let Filter = props => {
-  const { classes, initialDate, finalDate, product, products, handleChange } = props;
-  let pro = []
-  for (const key in products) {
-    if (products.hasOwnProperty(key)) {
-      const element = products[key];
-      pro.push(<MenuItem key={key} value={key}>{element.name}</MenuItem>)
+  const { classes, initialDate, finalDate, client, clients, handleChange } = props;
+  let cli = []
+  console.log(clients)
+  for (const key in clients) {
+    if (clients.hasOwnProperty(key)) {
+      const element = clients[key];
+      cli.push(<MenuItem key={key} value={element.key}>{`${element.name} ${element.address}`}</MenuItem>)
     }
   }
   return (
@@ -137,17 +135,17 @@ let Filter = props => {
           </Grid>
           <Grid item>
             <FormControl className={classes.formControl}>
-              <FormHelperText>Productos</FormHelperText>
+              <FormHelperText>Clientes</FormHelperText>
               <Select
-                value={product}
+                value={client}
                 onChange={handleChange}
                 displayEmpty
-                name='product'
+                name='client'
               >
                 <MenuItem value="">
                   <em>Todos</em>
                 </MenuItem>
-                {pro}
+                {cli}
               </Select>
             </FormControl>
           </Grid>
@@ -169,34 +167,64 @@ class List extends Component {
     rowsPerPage: 10,
     initialDate: moment().hour(0).minute(0).second(0).subtract(1, 'month'),
     finalDate: moment().hour(23).minute(59).second(59),
-    products: [],
-    product: "",
+    client: "",
     loading: false,
   };
-
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
-
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
+  };
+  nameClient = id => {
+    const client = this.props.clients.find(c => id === c.key)
+    return `${client.name} ${client.address}`
+  }
+  handleChange = async event => {
+    try {
+      if (event.target.name === "initialDate" || event.target.name === "finalDate") {
+        this.setState({ loading: true })
+        let date = moment(event.target.value)
+        event.target.name === "initialDate"
+          ? date.hour(0).minute(0).second(0)
+          : date.hour(23).minute(59).second(59)
+        const state = { [event.target.name]: date }
+        // const data = await this.searchMovements({ ...this.state, ...state })
+        this.setState({
+          ...state,
+          // data,
+          // loading: false
+        });
+      } else {
+        this.setState({ [event.target.name]: event.target.value });
+      }
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
   render() {
-    const { classes, bills, openBill, clients } = this.props;
-    let { rowsPerPage, page, initialDate, finalDate, product, products } = this.state;
+    const { classes, openBill, clients } = this.props;
+    let { bills } = this.props
+    let { rowsPerPage, page, initialDate, finalDate, client } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, bills.length - page * rowsPerPage);
+    console.log(client);
+    bills = bills
+      .filter(b => client === "" ? true : b.client === client)
     return (
       <div className={classes.tableWrapper}>
         <Filter
           initialDate={initialDate}
           finalDate={finalDate}
-          product={product}
+          client={client}
           handleChange={this.handleChange}
-          products={products}
+          clients={clients}
         />
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
               <TableCell>Cliente</TableCell>
               <TableCell>Fecha Factura</TableCell>
-              <TableCell numeric>Número</TableCell>
+              <TableCell numeric>Número Factura</TableCell>
               <TableCell numeric>Total</TableCell>
               <TableCell>Estado</TableCell>
             </TableRow>
@@ -205,6 +233,7 @@ class List extends Component {
             {bills.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .sort((a, b) => a.date < b.date ? 1 : -1)
               .map(n => {
+
                 return (
                   <TableRow
                     hover
@@ -213,11 +242,14 @@ class List extends Component {
                     key={n.key}
                   >
                     <TableCell component="th" scope="row">
-                      {clients.length > 0 && n.client ? clients.find(c => n.client === c.key).name : ""}
+                      {clients.length > 0 && n.client
+                        ? this.nameClient(n.client)
+                        : ""
+                      }
                     </TableCell>
                     <TableCell>{toDatePicker(n.date.toDate())}</TableCell>
                     <TableCell numeric>{n.number}</TableCell>
-                    <TableCell numeric>{n.amountTotal}</TableCell>
+                    <TableCell numeric>{formatCurrency(n.amountTotal)}</TableCell>
                     <TableCell>
                       {n.valid
                         ? <Typography variant="body2" color="textSecondary" gutterBottom>Validada</Typography>

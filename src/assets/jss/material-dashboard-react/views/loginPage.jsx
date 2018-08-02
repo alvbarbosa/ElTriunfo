@@ -72,7 +72,8 @@ const signupPageStyle =  {
     paddingTop: "0rem",
     border: "0",
     borderRadius: "6px",
-    justifyContent: "center !important"
+    justifyContent: "center !important",
+    flexDirection: 'column',
   },
   socialLine: {
     marginTop: "1rem",
@@ -81,7 +82,14 @@ const signupPageStyle =  {
   },
   inputIconsColor: {
     color: "#495057"
-  }
+  },
+  remember: {
+    alignSelf: 'flex-end',
+    color: '#000',
+    "&:hover" : {
+      color: "#999"
+    }
+  },
 };
 
 export default signupPageStyle;

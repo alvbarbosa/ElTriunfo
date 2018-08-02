@@ -72,13 +72,15 @@ const ButtonHeader = props => {
         </div>
       }
       <Button size="sm" color="primary" onClick={handleViewList} round>Lista Facturas</Button>
-      <PrintBill
-        ref={el => (this.componentRef = el)}
-        bill={bill}
-        client={clients.find(c => c.key === bill.client)}
-        items={items}
-        products={products}
-      />
+      {bill.valid &&
+        <PrintBill
+          ref={el => (this.componentRef = el)}
+          bill={bill}
+          client={clients.find(c => c.key === bill.client)}
+          items={items}
+          products={products}
+        />
+      }
     </div>
   }
 }

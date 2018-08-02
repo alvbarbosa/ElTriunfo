@@ -113,7 +113,7 @@ class Bill extends React.Component {
       valid: bill.valid,
       optionClient: this.props.clients.map(suggestion => ({
         value: suggestion.key,
-        label: suggestion.name,
+        label: suggestion.name + " " + suggestion.address,
       })),
       optionProduct: this.props.products.map(suggestion => ({
         value: suggestion.key,

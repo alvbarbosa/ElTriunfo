@@ -15,11 +15,19 @@ export default props => {
         onClose={props.onCloseAdd}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Agregar</DialogTitle>
+        <DialogTitle id="form-dialog-title">
+          {props.force
+            ? "Forzar"
+            : "Agregar"
+          }
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Agregue la cantidad de producto para adicionar al inventario
-            </DialogContentText>
+            {props.force
+              ? "Coloque la cantidad de producto que hay en el inventario"
+              : "Agregue la cantidad de producto para adicionar al inventario"
+            }
+          </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
@@ -34,7 +42,7 @@ export default props => {
           <Button onClick={props.onCloseAdd} color="danger">
             Cancelar
             </Button>
-          <Button onClick={props.handlerAdd} color="success">
+          <Button id="button-add" onClick={props.handlerAdd} color="success">
             Aceptar
             </Button>
         </DialogActions>
@@ -88,6 +96,7 @@ export default props => {
             Cancelar
             </Button>
           <Button
+            id="button-form"
             onClick={props.add ? props.handlerAddProduct : props.handlerModify}
             color="success"
           >

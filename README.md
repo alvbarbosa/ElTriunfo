@@ -3,6 +3,10 @@
 
 Proyecto para la implementación de un inventario personalizado para un establecimiento de comercio que vende carne, donde maneja las porciones de cada una de las partes del animal. También se maneja la parte de realizar una factura respecto a los pedidos que hacen los clientes llevando un histórico y sumando el total de las facturas.
 
+![captura1](https://firebasestorage.googleapis.com/v0/b/eltriunfo-ca926.appspot.com/o/captura1.PNG?alt=media&token=3fbb05e7-45f3-4d23-84be-3b0a67369660)
+
+![captura2](https://firebasestorage.googleapis.com/v0/b/eltriunfo-ca926.appspot.com/o/captura2.PNG?alt=media&token=ace66053-bc18-4a02-a39d-d532faab6b4b)
+
 Se utiliza la base de una UIX que se muestra a continuación.
 
 **[Now Ui Dashboard React](https://creativetimofficial.github.io/now-ui-dashboard-react/#/dashboard)** is an admin dashboard template designed to be beautiful and simple. It is built on top of [Reactstrap](https://reactstrap.github.io/), using [Now Ui Dashboard](https://www.creative-tim.com/product/now-ui-dashboard) and it is fully responsive. It comes with a big collections of elements that will offer you multiple possibilities to create the app that best fits your needs. It can be used to create admin panels, project management systems, web applications backend, CMS or CRM.

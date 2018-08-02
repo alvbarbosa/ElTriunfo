@@ -129,7 +129,8 @@ class Products extends React.Component {
     page: 0,
     rowsPerPage: 10,
     message: "",
-    tc: false
+    tc: false,
+    force: false,
   };
   componentDidMount = () => {
     db.collection("products")
@@ -176,16 +177,20 @@ class Products extends React.Component {
     this.setState({ rowsPerPage: event.target.value });
   };
 
-  handlerButtonAdd = id => {
+  handlerButtonAdd = (id, force) => {
+    console.log(id, force)
     this.setState({
       id,
       openDialogAdd: true,
+      force: force ? true : false,
     })
   }
 
-  handlerAdd = () => {
+  handlerAdd = e => {
+    const button = document.getElementById('button-add')
+    button.style.pointerEvents = 'none'
     const quantity = document.getElementById("quantity")
-    if (quantity.value > 0) {
+    if (quantity.value >= 0) {
       // Create a reference to the SF doc.
       const sfDocRef = db.collection("products").doc(this.state.id);
 
@@ -195,12 +200,15 @@ class Products extends React.Component {
           if (!sfDoc.exists) {
             throw new Error("Document does not exist!");
           }
-          const newTotal = sfDoc.data().total + parseFloat(quantity.value);
+          const newTotal = this.state.force
+            ? parseFloat(quantity.value)
+            : sfDoc.data().total + parseFloat(quantity.value);
           db.collection("productsMov").add({
             date: new Date(),
             id: this.state.id,
             quantity: quantity.value,
-            total: newTotal
+            total: newTotal,
+            note: this.state.force ? "Ajuste de producto" : "",
           })
           transaction.update(sfDocRef, { total: newTotal });
         });
@@ -210,6 +218,13 @@ class Products extends React.Component {
         })
         console.log("Transaction successfully committed!");
       }).catch(error => {
+        this.setState({
+          message: error,
+          tc: true
+        })
+        setTimeout(() => {
+          this.setState({ tc: false })
+        }, 5000);
         console.log("Transaction failed: ", error);
       });
     }
@@ -237,11 +252,20 @@ class Products extends React.Component {
         console.log("Document successfully written!");
       })
       .catch(error => {
+        this.setState({
+          message: error,
+          tc: true
+        })
+        setTimeout(() => {
+          this.setState({ tc: false })
+        }, 5000);
         console.error("Error writing document: ", error);
       });
   }
 
   handlerAddProduct = () => {
+    const button = document.getElementById('button-form')
+    button.style.pointerEvents = 'none'
     const name = document.getElementById('name').value
     const amount = document.getElementById('amount').value
     if (name.trim() && amount) {
@@ -255,6 +279,13 @@ class Products extends React.Component {
           console.log("Document written with ID: ", docRef.id);
         })
         .catch(error => {
+          this.setState({
+            message: error,
+            tc: true
+          })
+          setTimeout(() => {
+            this.setState({ tc: false })
+          }, 5000);
           console.error("Error adding document: ", error);
         });
     } else {
@@ -315,7 +346,7 @@ class Products extends React.Component {
                           <TableCell numeric>
                             <Button onClick={() => this.handlerButtonAdd(n.id)} size="sm" color="primary" round>Agregar</Button>
                             <Button onClick={() => this.handlerButtonModify(n)} size="sm" round>Modificar</Button>
-                            <Button size="sm" round>Forzar</Button>
+                            <Button onClick={() => this.handlerButtonAdd(n.id, true)} size="sm" round>Forzar</Button>
                           </TableCell>
                         </TableRow>
                       );
@@ -353,6 +384,7 @@ class Products extends React.Component {
               handlerModify={() => this.handlerModify()}
               handlerAddProduct={() => this.handlerAddProduct()}
               add={this.state.add}
+              force={this.state.force}
             />
             <Snackbar
               place="tc"
