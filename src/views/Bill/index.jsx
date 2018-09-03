@@ -101,16 +101,6 @@ class Bills extends Component {
   }
   componentDidMount = async () => {
     try {
-      db.collection('bills')
-        .onSnapshot(querySnapshot => {
-          let bills = []
-          querySnapshot.forEach(doc => {
-            let item = doc.data()
-            item.key = doc.id
-            bills.push(item)
-          });
-          this.setState({ bills })
-        });
 
       this.setState({ loading: true })
       let querySnapshot = await db.collection("products").get()
@@ -135,7 +125,6 @@ class Bills extends Component {
       console.log("Error getting documents: ", error);
     }
   }
-
   componentWillUnmount = () => {
     let unsubscribe = db.collection('bills')
       .onSnapshot(function () { });
@@ -146,7 +135,20 @@ class Bills extends Component {
       unsubscribe();
     }
   }
-
+  getBills = async dates => {
+    await db.collection('bills')
+      .where("date", ">=", dates.initialDate.toDate())
+      .where("date", "<=", dates.finalDate.toDate())
+      .onSnapshot(querySnapshot => {
+        let bills = []
+        querySnapshot.forEach(doc => {
+          let item = doc.data()
+          item.key = doc.id
+          bills.push(item)
+        });
+        this.setState({ bills })
+      });
+  }
   openBill = bill => {
     db.collection('bills').doc(bill.key).collection('items')
       .onSnapshot(querySnapshot => {
@@ -255,7 +257,6 @@ class Bills extends Component {
 
               const total = sfDoc.data().total - quantity;
               await transaction.update(refItem, { total });
-              console.log(item)
               db.collection('productsMov').add({
                 date: new Date(),
                 id: item.product,
@@ -347,6 +348,7 @@ class Bills extends Component {
                   bills={bills}
                   openBill={this.openBill}
                   clients={clients}
+                  getBills={this.getBills}
                 />
                 : <Bill
                   clients={clients}

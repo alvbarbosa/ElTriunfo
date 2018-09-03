@@ -96,7 +96,6 @@ const TablePaginationActionsWrapped = withStyles(listStyles, { withTheme: true }
 let Filter = props => {
   const { classes, initialDate, finalDate, client, clients, handleChange } = props;
   let cli = []
-  console.log(clients)
   for (const key in clients) {
     if (clients.hasOwnProperty(key)) {
       const element = clients[key];
@@ -170,6 +169,10 @@ class List extends Component {
     client: "",
     loading: false,
   };
+  componentDidMount = () => {
+    this.props.getBills(this.state)
+  }
+
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
@@ -189,12 +192,11 @@ class List extends Component {
           ? date.hour(0).minute(0).second(0)
           : date.hour(23).minute(59).second(59)
         const state = { [event.target.name]: date }
-        // const data = await this.searchMovements({ ...this.state, ...state })
-        this.setState({
+        await this.setState({
           ...state,
-          // data,
           // loading: false
         });
+        await this.props.getBills(this.state)
       } else {
         this.setState({ [event.target.name]: event.target.value });
       }
@@ -207,9 +209,9 @@ class List extends Component {
     let { bills } = this.props
     let { rowsPerPage, page, initialDate, finalDate, client } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, bills.length - page * rowsPerPage);
-    console.log(client);
     bills = bills
       .filter(b => client === "" ? true : b.client === client)
+      .sort((a, b) => a.date < b.date ? 1 : -1)
     return (
       <div className={classes.tableWrapper}>
         <Filter
@@ -231,7 +233,6 @@ class List extends Component {
           </TableHead>
           <TableBody>
             {bills.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .sort((a, b) => a.date < b.date ? 1 : -1)
               .map(n => {
 
                 return (
