@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment'
-import ReactToPrint from "react-to-print";
+//import ReactToPrint from "react-to-print";
 import { withStyles } from '@material-ui/core/styles';
 import DescriptionIcon from "@material-ui/icons/Description";
 import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
@@ -16,6 +16,7 @@ import CardIcon from "components/Card/CardIcon.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 import Danger from "components/Typography/Danger.jsx";
 import Snackbar from "components/Snackbar/Snackbar.jsx";
+import Iframe from 'react-iframe';
 import Bill from './Bill';
 import List from './List'
 import PrintBill from './Print';
@@ -45,43 +46,61 @@ const TitleBill = props => {
   }
 }
 
-const ButtonHeader = props => {
-  const {
-    bill,
-    viewList,
-    handleViewList,
-    createBill,
-    deleteBill,
-    validateBill,
-    items,
-    clients,
-    products,
-  } = props
-  if (viewList) {
-    return <Button onClick={createBill} size="sm" color="primary" round>Crear</Button>
-  } else {
-    return <div style={{ display: 'flex', justifyContent: 'space-between' }} >
-      {bill.valid
-        ? <ReactToPrint
-          trigger={() => <Button size="sm" color="primary" round>Imprimir</Button>}
-          content={() => this.componentRef}
-        />
-        : <div>
-          <Button onClick={validateBill} size="sm" color="primary" round>Validar</Button>
-          <Button onClick={deleteBill} size="sm" round>Descartar</Button>
-        </div>
-      }
-      <Button size="sm" color="primary" onClick={handleViewList} round>Lista Facturas</Button>
-      {bill.valid &&
-        <PrintBill
-          ref={el => (this.componentRef = el)}
-          bill={bill}
-          client={clients.find(c => c.key === bill.client)}
-          items={items}
-          products={products}
-        />
-      }
-    </div>
+class ButtonHeader extends Component {
+  render() {
+    const {
+      bill,
+      viewList,
+      handleViewList,
+      createBill,
+      deleteBill,
+      validateBill,
+      items,
+      clients,
+      products,
+    } = this.props
+    if (viewList) {
+      return <Button onClick={createBill} size="sm" color="primary" round>Crear</Button>
+    } else {
+      return <div style={{ display: 'flex', justifyContent: 'space-between' }} >
+        {bill.valid
+          ? <div>
+            <Button
+              size="sm"
+              color="primary"
+              round
+              onClick={() => {
+                var content = document.getElementById("divcontents");
+                var pri = document.getElementById("ifmcontentstoprint").contentWindow;
+                pri.document.open();
+                pri.document.write(content.innerHTML);
+                pri.document.close();
+                pri.focus();
+                pri.print();
+              }}
+            >
+              Imprimir
+            </Button>
+            {/* <ReactToPrint
+              trigger={() => <Button size="sm" color="primary" round>Imprimir</Button>}
+              content={() => this.componentRef}
+            /> */}
+            <PrintBill
+              //ref={el => (this.componentRef = el)}
+              bill={bill}
+              client={clients.find(c => bill.client.value ? c.key === bill.client.value : c.key === bill.client)}
+              items={items}
+              products={products}
+            />
+          </div>
+          : <div>
+            <Button onClick={validateBill} size="sm" color="primary" round>Validar</Button>
+            <Button onClick={deleteBill} size="sm" round>Descartar</Button>
+          </div>
+        }
+        <Button size="sm" color="primary" onClick={handleViewList} round>Lista Facturas</Button>
+      </div>
+    }
   }
 }
 
@@ -380,6 +399,9 @@ class Bills extends Component {
           closeNotification={() => this.setState({ tc: false })}
           close
         />
+        <div style={{ display: 'none' }}>
+          <Iframe url="" id="ifmcontentstoprint" title="ifmcontentstoprint" style={{ height: 0, width: '100%', position: 'absolute' }}></Iframe>
+        </div>
       </div>
     )
   }

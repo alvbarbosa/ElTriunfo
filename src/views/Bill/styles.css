@@ -14,6 +14,9 @@
   .row-bill {
     height: auto;
   }
+  header {
+    background-color: black;
+  }
   .section-print {
     display: flex;
     flex: 1;
@@ -22,15 +25,22 @@
   }
   .section {
     flex: 1;
+    position: relative;
+  }
+  .original-copy {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
   }
   .subpage {
     display: flex;
     flex-direction: column;
   }
-  header {
+  #prueba {
     width: 100%;
   }
-  header .title {
+  #prueba .title {
     display: flex;
     justify-content: space-between;
     padding-right: 15px;

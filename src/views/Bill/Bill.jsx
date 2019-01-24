@@ -20,7 +20,6 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import TableFooter from '@material-ui/core/TableFooter';
-import 'react-select/dist/react-select.css';
 import { billStyles } from "./Styles";
 import { db } from "../../firebase";
 import { formatCurrency, toDatePicker } from "utils";
@@ -125,7 +124,7 @@ class Bill extends React.Component {
   handleChangeAutocomplet = name => async value => {
     let unitPrice = 0
     if (name === "product") {
-      unitPrice = value ? this.props.products.find(p => p.key === value).amount : 0
+      unitPrice = value ? this.props.products.find(p => value.value ? p.key === value.value : p.key === value).amount : 0
       this.setState({
         unitPrice,
         price: unitPrice * this.state.quantity,
@@ -249,7 +248,21 @@ class Bill extends React.Component {
       <div className={classes.root}>
         <Grid container>
           <Grid item xs={12} sm={12} md={6}>
-            <TextField
+            <Select
+              //classes={classes}
+              //styles={selectStyles}
+              options={optionClient}
+              //components={components}
+              value={client}
+              onChange={this.handleChangeAutocomplet('client')}
+              placeholder="Seleccione el cliente"
+              isClearable
+              isDisabled={valid}
+              textFieldProps={{
+                label: 'Label'
+              }}
+            />
+            {/* <TextField
               fullWidth
               disabled={valid}
               value={client}
@@ -270,7 +283,7 @@ class Bill extends React.Component {
                   options: optionClient,
                 },
               }}
-            />
+            /> */}
           </Grid>
           <Grid item xs={12} sm={12} md={6}>
             <TextField
@@ -305,7 +318,7 @@ class Bill extends React.Component {
                   return (
                     <TableRow className={classes.row} key={item.key}>
                       <TableCell component="th" scope="row">
-                        {products.find(p => p.key === item.product).name}
+                        {products.find(p => item.product.value ? p.key === item.product.value : p.key === item.product).name}
                       </TableCell>
                       <TableCell numeric>{item.quantity}</TableCell>
                       <TableCell numeric>{formatCurrency(item.unitPrice)}</TableCell>

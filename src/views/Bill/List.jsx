@@ -180,7 +180,7 @@ class List extends Component {
     this.setState({ rowsPerPage: event.target.value });
   };
   nameClient = id => {
-    const client = this.props.clients.find(c => id === c.key)
+    const client = this.props.clients.find(c => id.value ? id.value === c.key: id === c.key)
     return `${client.name} ${client.address}`
   }
   handleChange = async event => {
