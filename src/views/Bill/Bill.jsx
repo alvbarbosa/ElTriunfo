@@ -249,10 +249,8 @@ class Bill extends React.Component {
         <Grid container>
           <Grid item xs={12} sm={12} md={6}>
             <Select
-              //classes={classes}
-              //styles={selectStyles}
+              styles={{ container: (base) => ({ ...base, marginTop: 12 }) }}
               options={optionClient}
-              //components={components}
               value={client}
               onChange={this.handleChangeAutocomplet('client')}
               placeholder="Seleccione el cliente"
@@ -262,28 +260,6 @@ class Bill extends React.Component {
                 label: 'Label'
               }}
             />
-            {/* <TextField
-              fullWidth
-              disabled={valid}
-              value={client}
-              onChange={this.handleChangeAutocomplet('client')}
-              placeholder="Seleccione el cliente"
-              name="react-select-client"
-              label="Cliente"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              InputProps={{
-                inputComponent: SelectWrapped,
-                inputProps: {
-                  classes,
-                  instanceId: 'react-select-client',
-                  id: 'react-select-client',
-                  simpleValue: true,
-                  options: optionClient,
-                },
-              }}
-            /> */}
           </Grid>
           <Grid item xs={12} sm={12} md={6}>
             <TextField

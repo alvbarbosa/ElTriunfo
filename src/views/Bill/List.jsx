@@ -164,7 +164,7 @@ class List extends Component {
   state = {
     page: 0,
     rowsPerPage: 10,
-    initialDate: moment().hour(0).minute(0).second(0).subtract(1, 'month'),
+    initialDate: moment().hour(0).minute(0).second(0).subtract(1, 'weeks'),
     finalDate: moment().hour(23).minute(59).second(59),
     client: "",
     loading: false,
@@ -211,7 +211,7 @@ class List extends Component {
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, bills.length - page * rowsPerPage);
     bills = bills
       .filter(b => client === "" ? true : b.client === client)
-      .sort((a, b) => a.date < b.date ? 1 : -1)
+      .sort((a, b) => a.number < b.number ? 1 : -1)
     return (
       <div className={classes.tableWrapper}>
         <Filter

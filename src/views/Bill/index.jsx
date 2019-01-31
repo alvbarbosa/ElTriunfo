@@ -47,6 +47,15 @@ const TitleBill = props => {
 }
 
 class ButtonHeader extends Component {
+  printMethod = () => {
+    var content = document.getElementById("divcontents");
+    var pri = document.getElementById("ifmcontentstoprint").contentWindow;
+    pri.document.open();
+    pri.document.write(content.innerHTML);
+    pri.document.close();
+    pri.focus();
+    pri.print();
+  }
   render() {
     const {
       bill,
@@ -69,15 +78,7 @@ class ButtonHeader extends Component {
               size="sm"
               color="primary"
               round
-              onClick={() => {
-                var content = document.getElementById("divcontents");
-                var pri = document.getElementById("ifmcontentstoprint").contentWindow;
-                pri.document.open();
-                pri.document.write(content.innerHTML);
-                pri.document.close();
-                pri.focus();
-                pri.print();
-              }}
+              onClick={() => this.printMethod()}
             >
               Imprimir
             </Button>
@@ -267,7 +268,7 @@ class Bills extends Component {
             const item = items[key];
 
             quantity = parseInt(item.quantity, 10)
-            refItem = db.collection('products').doc(item.product)
+            refItem = db.collection('products').doc(item.product.value ? item.product.value : item.product)
             await db.runTransaction(async transaction => {
               const sfDoc = await transaction.get(refItem)
               if (!sfDoc.exists) {

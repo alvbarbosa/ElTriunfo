@@ -15,6 +15,7 @@ build
 Thumbs.db
 .env
 .idea
+.firebase
 .firebaserc
 firebase.json
 npm-debug.log
