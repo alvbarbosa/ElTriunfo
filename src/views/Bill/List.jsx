@@ -25,6 +25,24 @@ import Typography from '@material-ui/core/Typography';
 import { listStyles } from "./Styles";
 import { toDatePicker, formatCurrency } from "utils";
 
+// client === "" ? true : (b.client.value ? b.client.value === client : b.client === client)
+
+const filterClient = (listClient, currentClient) => {
+  if (currentClient === "") {
+    return true
+  } else {
+    if (listClient) {
+      if (listClient.value) {
+        return listClient.value === currentClient
+      } else {
+        return listClient === currentClient
+      }
+    } else {
+      return false
+    }
+  }
+}
+
 class TablePaginationActions extends React.Component {
   handleFirstPageButtonClick = event => {
     this.props.onChangePage(event, 0);
@@ -180,7 +198,7 @@ class List extends Component {
     this.setState({ rowsPerPage: event.target.value });
   };
   nameClient = id => {
-    const client = this.props.clients.find(c => id.value ? id.value === c.key: id === c.key)
+    const client = this.props.clients.find(c => id.value ? id.value === c.key : id === c.key)
     return `${client.name} ${client.address}`
   }
   handleChange = async event => {
@@ -209,8 +227,10 @@ class List extends Component {
     let { bills } = this.props
     let { rowsPerPage, page, initialDate, finalDate, client } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, bills.length - page * rowsPerPage);
+    console.log(client);
+    console.log(bills)
     bills = bills
-      .filter(b => client === "" ? true : b.client === client)
+      .filter(b => filterClient(b.client, client))
       .sort((a, b) => a.number < b.number ? 1 : -1)
     return (
       <div className={classes.tableWrapper}>
