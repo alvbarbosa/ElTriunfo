@@ -28,7 +28,7 @@ const Header = props => {
         />
         <div>
           <Typography className="title-typo" style={{ margin: 0, padding: 0 }} variant="subheading" gutterBottom>
-            Carnes el Triunfo
+            Carnes el Triunfo L.A.
           </Typography>
           <Typography className="title-typo" style={{ margin: 0, padding: 0 }} variant="caption" gutterBottom align="center">
             La excelencia en Carnes
