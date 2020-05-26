@@ -20,3 +20,4 @@ Thumbs.db
 firebase.json
 npm-debug.log
 compilation-stats.json
+.firebase
