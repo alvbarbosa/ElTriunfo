@@ -5,10 +5,11 @@ import DescriptionIcon from "@material-ui/icons/Description";
 import PeopleIcon from "@material-ui/icons/People";
 // import Unarchive from "@material-ui/icons/Unarchive";
 // core components/views
-import Products from "views/Products";
-import ProductsMovements from "views/Products/Moves";
-import Bill from "views/Bill";
-import Client from "views/Client";
+import Products from "../views/Products";
+// import ProductsMovements from "../views/Products/Moves";
+import MoveByClient from "../views/Products/MoveByClient"
+import Bill from "../views/Bill";
+import Client from "../views/Client";
 // import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.jsx";
 
 const dashboardRoutes = [
@@ -75,12 +76,19 @@ const dashboardRoutes = [
     icon: DescriptionIcon,
     component: Bill
   },
+  // {
+  //   path: "/product-movements",
+  //   sidebarName: "Movimientos",
+  //   navbarName: "Movimientos de productos",
+  //   icon: LoopIcon,
+  //   component: ProductsMovements
+  // },
   {
-    path: "/product-movements",
-    sidebarName: "Movimientos",
-    navbarName: "Movimientos de productos",
+    path: "/movements-client",
+    sidebarName: "Movimientos Clientes",
+    navbarName: "Movimientos por clientes",
     icon: LoopIcon,
-    component: ProductsMovements
+    component: MoveByClient
   },
   {
     path: "/client",

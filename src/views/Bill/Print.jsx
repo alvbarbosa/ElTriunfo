@@ -6,8 +6,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import TableFooter from '@material-ui/core/TableFooter';
-import logo from 'assets/img/res.png'
-import { pad2, formatCurrency } from "utils";
+import logo from '../../assets/img/res.png'
+import { pad2, formatCurrency } from "../../utils";
 
 const Header = props => {
   return (

@@ -16,9 +16,9 @@ import Person from "@material-ui/icons/Person";
 // import Search from "@material-ui/icons/Search";
 // core components
 // import CustomInput from "components/CustomInput/CustomInput.jsx";
-import Button from "components/CustomButtons/Button.jsx";
+import Button from "../../components/CustomButtons/Button.jsx";
 
-import headerLinksStyle from "assets/jss/material-dashboard-react/components/headerLinksStyle";
+import headerLinksStyle from "../../assets/jss/material-dashboard-react/components/headerLinksStyle";
 
 class HeaderLinks extends React.Component {
   state = {

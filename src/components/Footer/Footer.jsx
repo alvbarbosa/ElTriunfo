@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 // core components
-import footerStyle from "assets/jss/material-dashboard-react/components/footerStyle";
+import footerStyle from "../../assets/jss/material-dashboard-react/components/footerStyle";
 
 function Footer({ ...props }) {
   const { classes } = props;

@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from "components/CustomButtons/Button.jsx";
+import Button from "../../components/CustomButtons/Button.jsx";
 
 export default props => {
   return (

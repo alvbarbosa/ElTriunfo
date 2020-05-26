@@ -20,11 +20,17 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Typography from '@material-ui/core/Typography';
+// import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Card from "../../components/Card/Card.jsx";
+import CardHeader from "../../components/Card/CardHeader.jsx";
+import CardBody from "../../components/Card/CardBody.jsx";
+import CardIcon from "../../components/Card/CardIcon.jsx";
+import LoopIcon from "@material-ui/icons/Loop";
 
 import { listStyles } from "./Styles";
-import { toDatePicker, formatCurrency } from "../../utils";
-
+import { toDatePicker } from "../../utils";
+import { db } from "../../firebase";
 // client === "" ? true : (b.client.value ? b.client.value === client : b.client === client)
 
 const filterClient = (listClient, currentClient) => {
@@ -178,7 +184,7 @@ Filter.propTypes = {
 
 Filter = withStyles(listStyles)(Filter);
 
-class List extends Component {
+class MoveByClient extends Component {
   state = {
     page: 0,
     rowsPerPage: 10,
@@ -186,11 +192,64 @@ class List extends Component {
     finalDate: moment().hour(23).minute(59).second(59),
     client: "",
     loading: false,
+    bills: [],
+    clients: [],
+    products : [],
+    items: []
   };
-  componentDidMount = () => {
-    this.props.getBills(this.state)
+  getBills = async dates => {
+    await db.collection('bills')
+      .where("date", ">=", dates.initialDate.toDate())
+      .where("date", "<=", dates.finalDate.toDate())
+      .onSnapshot(querySnapshot => {
+        let bills = []
+        let items = []
+        querySnapshot.forEach(async doc => {
+          let bill = doc.data()
+          bill.key = doc.id
+          await db.collection('bills').doc(bill.key).collection('items')
+          .onSnapshot(itemsSnapshot => {
+            itemsSnapshot.forEach(doc1 => {
+              let item = doc1.data()
+              item.key = doc1.id
+              item.client = bill.client
+              items.push(item)
+            });
+          })
+          bills.push(bill)
+        });
+        this.setState({ bills, items })
+      });
   }
-
+  getClients = async () => {
+    this.setState({ loading: true })
+    let querySnapshot = await db.collection("clients").get()
+    let clients = []
+    querySnapshot.forEach(doc => {
+        clients.push({
+            ...doc.data(),
+            key: doc.id,
+        })
+    });
+    this.setState({ clients, loading: false })
+}
+getProducts = async () => {
+    this.setState({ loading: true })
+    let products = []
+    let querySnapshot = await db.collection("products").get()
+    querySnapshot.forEach(doc => {
+        products.push({
+            ...doc.data(),
+            key: doc.id,
+        })
+    });
+    this.setState({ products, loading: false })
+  }
+  componentDidMount = async () => {
+    await this.getBills(this.state)
+    await this.getClients()
+    await this.getProducts()
+  }
   handleChangePage = (event, page) => {
     this.setState({ page });
   };
@@ -198,7 +257,7 @@ class List extends Component {
     this.setState({ rowsPerPage: event.target.value });
   };
   nameClient = id => {
-    const client = this.props.clients.find(c => id.value ? id.value === c.key : id === c.key)
+    const client = this.state.clients.find(c => id.value ? id.value === c.key : id === c.key)
     return `${client.name} ${client.address}`
   }
   handleChange = async event => {
@@ -223,16 +282,33 @@ class List extends Component {
     }
   };
   render() {
-    const { classes, openBill, clients } = this.props;
-    let { bills } = this.props
-    let { rowsPerPage, page, initialDate, finalDate, client } = this.state;
+    const { classes, openBill } = this.props;
+    let { rowsPerPage, page, initialDate, finalDate, client, clients, bills, items, products } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, bills.length - page * rowsPerPage);
-    console.log(client);
-    console.log(bills)
     bills = bills
       .filter(b => filterClient(b.client, client))
       .sort((a, b) => a.number < b.number ? 1 : -1)
+    items = items
+      .filter(b => filterClient(b.client, client))
+    products = products.map(pro => {
+        let item = pro
+        item.quantity = items.filter(x => x.product.value === pro.key).reduce((a,b) => a + parseInt(b.quantity), 0)
+        return item
+    })
+    console.log('products', products)
     return (
+        <Paper className={classes.root}>
+        <Card>
+          <CardHeader color="primary" icon>
+            <CardIcon color="primary">
+              <LoopIcon />
+            </CardIcon>
+            <h4 className={classes.cardTitle}>Acomulado por Cliente</h4>
+            <p className={classes.cardCategory}>
+              Seleccione los filtros para mejorar la busqueda de movimientos en los productos
+            </p>
+          </CardHeader>
+          <CardBody>
       <div className={classes.tableWrapper}>
         <Filter
           initialDate={initialDate}
@@ -244,16 +320,15 @@ class List extends Component {
         <Table className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell>Cliente</TableCell>
-              <TableCell>Fecha Factura</TableCell>
-              <TableCell numeric>Número Factura</TableCell>
+              <TableCell>Pruducto</TableCell>
               <TableCell numeric>Total</TableCell>
-              <TableCell>Estado</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {bills.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(n => {
+            {products
+                .filter(x => x.quantity > 0)
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map(n => {
 
                 return (
                   <TableRow
@@ -262,7 +337,9 @@ class List extends Component {
                     className={classes.row}
                     key={n.key}
                   >
-                    <TableCell component="th" scope="row">
+                      <TableCell>{n.name}</TableCell>
+                      <TableCell numeric>{n.quantity}</TableCell>
+                    {/* <TableCell component="th" scope="row">
                       {clients.length > 0 && n.client
                         ? this.nameClient(n.client)
                         : ""
@@ -276,7 +353,7 @@ class List extends Component {
                         ? <Typography variant="body2" color="textSecondary" gutterBottom>Validada</Typography>
                         : <Typography variant="body2" color="error" gutterBottom>Borrador</Typography>
                       }
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 );
               })}
@@ -300,21 +377,24 @@ class List extends Component {
                 labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
                 rowsPerPageOptions={[10, 25, 50]}
               />
-              <TableCell colSpan={2} numeric>
+              {/* <TableCell colSpan={2} numeric>
                 <Typography variant="title" gutterBottom>
                   {`Total: ${formatCurrency(bills.reduce((a, b) => a + b.amountTotal, 0))}`}
                 </Typography>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           </TableFooter>
         </Table>
       </div>
+      </CardBody>
+        </Card>
+      </Paper>
     )
   }
 }
 
-List.propTypes = {
+MoveByClient.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(listStyles)(List)
+export default withStyles(listStyles)(MoveByClient)

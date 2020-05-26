@@ -5,9 +5,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Button from "components/CustomButtons/Button.jsx";
+import Button from "../../components/CustomButtons/Button.jsx";
 
-import { formatCurrency } from "utils";
+import { formatCurrency } from "../../utils";
 
 export default props => {
   const title = props.add ? "Agregar Elemento" : "Modificar Elemento"

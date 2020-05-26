@@ -13,7 +13,7 @@ const config = {
   messagingSenderId: "873632175371"
 };
 
-const settings = { timestampsInSnapshots: true };
+// const settings = { timestampsInSnapshots: true };
 
 
 if (!apps.length) {
@@ -22,7 +22,7 @@ if (!apps.length) {
 
 const auth = authFire();
 const db = firestore()
-db.settings(settings);
+// db.settings(settings);
 
 export {
   auth,

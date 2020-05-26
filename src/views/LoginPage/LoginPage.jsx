@@ -8,17 +8,17 @@ import LockOutline from "@material-ui/icons/LockOutline";
 import ErrorIcon from "@material-ui/icons/ErrorOutline";
 import DoneIcon from "@material-ui/icons/Done";
 // core components
-import GridContainer from "components/Grid/GridContainer.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
-import Button from "components/CustomButtons/Button.jsx";
-import Card from "components/Card/Card.jsx";
-import CardBody from "components/Card/CardBody.jsx";
-import CardHeader from "components/Card/CardHeader.jsx";
-import CardFooter from "components/Card/CardFooter.jsx";
-import CustomInput from "components/CustomInput/CustomInput.jsx";
-import Snackbar from "components/Snackbar/Snackbar.jsx";
-import loginPageStyle from "assets/jss/material-dashboard-react/views/loginPage.jsx";
-import image from "assets/img/bg7.jpg";
+import GridContainer from "../../components/Grid/GridContainer.jsx";
+import GridItem from "../../components/Grid/GridItem.jsx";
+import Button from "../../components/CustomButtons/Button.jsx";
+import Card from "../../components/Card/Card.jsx";
+import CardBody from "../../components/Card/CardBody.jsx";
+import CardHeader from "../../components/Card/CardHeader.jsx";
+import CardFooter from "../../components/Card/CardFooter.jsx";
+import CustomInput from "../../components/CustomInput/CustomInput.jsx";
+import Snackbar from "../../components/Snackbar/Snackbar.jsx";
+import loginPageStyle from "../../assets/jss/material-dashboard-react/views/loginPage.jsx";
+import image from "../../assets/img/bg7.jpg";
 import { auth, errFirebase } from "../../firebase";
 
 const FormRemember = props => {

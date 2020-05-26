@@ -22,7 +22,7 @@ import Icon from '@material-ui/core/Icon';
 import TableFooter from '@material-ui/core/TableFooter';
 import { billStyles } from "./Styles";
 import { db } from "../../firebase";
-import { formatCurrency, toDatePicker } from "utils";
+import { formatCurrency, toDatePicker } from "../../utils";
 import Dialogs from './Dialogs'
 
 class Option extends React.Component {

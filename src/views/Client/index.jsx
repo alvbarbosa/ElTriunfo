@@ -15,12 +15,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
 import ErrorIcon from "@material-ui/icons/ErrorOutline";
 import PeopleIcon from "@material-ui/icons/People";
-import Button from "components/CustomButtons/Button.jsx";
-import Snackbar from "components/Snackbar/Snackbar.jsx";
-import CardIcon from "components/Card/CardIcon.jsx";
-import Card from "components/Card/Card.jsx";
-import CardHeader from "components/Card/CardHeader.jsx";
-import CardBody from "components/Card/CardBody.jsx";
+import Button from "../../components/CustomButtons/Button.jsx";
+import Snackbar from "../../components/Snackbar/Snackbar.jsx";
+import CardIcon from "../../components/Card/CardIcon.jsx";
+import Card from "../../components/Card/Card.jsx";
+import CardHeader from "../../components/Card/CardHeader.jsx";
+import CardBody from "../../components/Card/CardBody.jsx";
 
 import { db } from "../../firebase";
 import Dialogs from './Dialogs';

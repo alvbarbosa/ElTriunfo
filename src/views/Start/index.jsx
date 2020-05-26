@@ -7,8 +7,8 @@ import {
   Redirect,
 } from "react-router-dom";
 
-import LoginPage from "views/LoginPage/LoginPage.jsx";
-import Dashboard from "layouts/Dashboard/Dashboard.jsx";
+import LoginPage from "../../views/LoginPage/LoginPage.jsx";
+import Dashboard from "../../layouts/Dashboard/Dashboard.jsx";
 import StartPage from "./Start"
 import { auth } from "../../firebase";
 
