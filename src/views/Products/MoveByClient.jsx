@@ -27,6 +27,7 @@ import CardHeader from "../../components/Card/CardHeader.jsx";
 import CardBody from "../../components/Card/CardBody.jsx";
 import CardIcon from "../../components/Card/CardIcon.jsx";
 import LoopIcon from "@material-ui/icons/Loop";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { listStyles } from "./Styles";
 import { toDatePicker } from "../../utils";
@@ -194,54 +195,56 @@ class MoveByClient extends Component {
     loading: false,
     bills: [],
     clients: [],
-    products : [],
+    products: [],
     items: []
   };
   getBills = async dates => {
-    await db.collection('bills')
+    this.setState({ loading: true })
+    let querySnapshot = await db.collection('bills')
       .where("date", ">=", dates.initialDate.toDate())
       .where("date", "<=", dates.finalDate.toDate())
-      .onSnapshot(querySnapshot => {
-        let bills = []
-        let items = []
-        querySnapshot.forEach(async doc => {
-          let bill = doc.data()
-          bill.key = doc.id
-          await db.collection('bills').doc(bill.key).collection('items')
-          .onSnapshot(itemsSnapshot => {
-            itemsSnapshot.forEach(doc1 => {
-              let item = doc1.data()
-              item.key = doc1.id
-              item.client = bill.client
-              items.push(item)
-            });
-          })
-          bills.push(bill)
-        });
-        this.setState({ bills, items })
+      .get()
+    let bills = []
+    let items = []
+    let docs = []
+    querySnapshot.forEach(doc => {
+      docs.push(doc)
+    })
+    for (const doc of docs) {
+      let bill = doc.data()
+      bill.key = doc.id
+      let itemsSnapshot = await db.collection('bills').doc(bill.key).collection('items').get()
+      itemsSnapshot.forEach(doc1 => {
+        let item = doc1.data()
+        item.key = doc1.id
+        item.client = bill.client
+        items.push(item)
       });
+      bills.push(bill)
+    }
+    this.setState({ bills, items, loading: false })
   }
   getClients = async () => {
     this.setState({ loading: true })
     let querySnapshot = await db.collection("clients").get()
     let clients = []
     querySnapshot.forEach(doc => {
-        clients.push({
-            ...doc.data(),
-            key: doc.id,
-        })
+      clients.push({
+        ...doc.data(),
+        key: doc.id,
+      })
     });
     this.setState({ clients, loading: false })
-}
-getProducts = async () => {
+  }
+  getProducts = async () => {
     this.setState({ loading: true })
     let products = []
     let querySnapshot = await db.collection("products").get()
     querySnapshot.forEach(doc => {
-        products.push({
-            ...doc.data(),
-            key: doc.id,
-        })
+      products.push({
+        ...doc.data(),
+        key: doc.id,
+      })
     });
     this.setState({ products, loading: false })
   }
@@ -273,7 +276,7 @@ getProducts = async () => {
           ...state,
           // loading: false
         });
-        await this.props.getBills(this.state)
+        await this.getBills(this.state)
       } else {
         this.setState({ [event.target.name]: event.target.value });
       }
@@ -283,7 +286,7 @@ getProducts = async () => {
   };
   render() {
     const { classes, openBill } = this.props;
-    let { rowsPerPage, page, initialDate, finalDate, client, clients, bills, items, products } = this.state;
+    let { rowsPerPage, page, initialDate, finalDate, client, clients, bills, items, products, loading } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, bills.length - page * rowsPerPage);
     bills = bills
       .filter(b => filterClient(b.client, client))
@@ -291,13 +294,12 @@ getProducts = async () => {
     items = items
       .filter(b => filterClient(b.client, client))
     products = products.map(pro => {
-        let item = pro
-        item.quantity = items.filter(x => x.product.value === pro.key).reduce((a,b) => a + parseInt(b.quantity), 0)
-        return item
+      let item = pro
+      item.quantity = items.filter(x => x.product.value === pro.key).reduce((a, b) => a + parseInt(b.quantity), 0)
+      return item
     })
-    console.log('products', products)
     return (
-        <Paper className={classes.root}>
+      <Paper className={classes.root}>
         <Card>
           <CardHeader color="primary" icon>
             <CardIcon color="primary">
@@ -309,84 +311,68 @@ getProducts = async () => {
             </p>
           </CardHeader>
           <CardBody>
-      <div className={classes.tableWrapper}>
-        <Filter
-          initialDate={initialDate}
-          finalDate={finalDate}
-          client={client}
-          handleChange={this.handleChange}
-          clients={clients}
-        />
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Pruducto</TableCell>
-              <TableCell numeric>Total</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products
-                .filter(x => x.quantity > 0)
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(n => {
-
-                return (
-                  <TableRow
-                    hover
-                    onClick={() => openBill(n)}
-                    className={classes.row}
-                    key={n.key}
-                  >
-                      <TableCell>{n.name}</TableCell>
-                      <TableCell numeric>{n.quantity}</TableCell>
-                    {/* <TableCell component="th" scope="row">
-                      {clients.length > 0 && n.client
-                        ? this.nameClient(n.client)
-                        : ""
-                      }
-                    </TableCell>
-                    <TableCell>{toDatePicker(n.date.toDate())}</TableCell>
-                    <TableCell numeric>{n.number}</TableCell>
-                    <TableCell numeric>{formatCurrency(n.amountTotal)}</TableCell>
-                    <TableCell>
-                      {n.valid
-                        ? <Typography variant="body2" color="textSecondary" gutterBottom>Validada</Typography>
-                        : <Typography variant="body2" color="error" gutterBottom>Borrador</Typography>
-                      }
-                    </TableCell> */}
-                  </TableRow>
-                );
-              })}
-            {emptyRows > 0 && (
-              <TableRow style={{ height: 48 * emptyRows }}>
-                <TableCell colSpan={6} />
-              </TableRow>
-            )}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                colSpan={3}
-                count={bills.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={this.handleChangePage}
-                onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActionsWrapped}
-                labelRowsPerPage="Filas por pagina"
-                labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
-                rowsPerPageOptions={[10, 25, 50]}
+            <div className={classes.tableWrapper}>
+              <Filter
+                initialDate={initialDate}
+                finalDate={finalDate}
+                client={client}
+                handleChange={this.handleChange}
+                clients={clients}
               />
-              {/* <TableCell colSpan={2} numeric>
-                <Typography variant="title" gutterBottom>
-                  {`Total: ${formatCurrency(bills.reduce((a, b) => a + b.amountTotal, 0))}`}
-                </Typography>
-              </TableCell> */}
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </div>
-      </CardBody>
+              {loading
+                ? <div className={classes.progress}><CircularProgress /></div>
+                :
+                <Table className={classes.table}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Pruducto</TableCell>
+                      <TableCell numeric>Total</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {products
+                      .filter(x => x.quantity > 0)
+                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                      .map(n => {
+
+                        return (
+                          <TableRow
+                            hover
+                            onClick={() => openBill(n)}
+                            className={classes.row}
+                            key={n.key}
+                          >
+                            <TableCell>{n.name}</TableCell>
+                            <TableCell numeric>{n.quantity}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: 48 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TablePagination
+                        colSpan={3}
+                        count={bills.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onChangePage={this.handleChangePage}
+                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        ActionsComponent={TablePaginationActionsWrapped}
+                        labelRowsPerPage="Filas por pagina"
+                        labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count}`}
+                        rowsPerPageOptions={[10, 25, 50]}
+                      />
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              }
+            </div>
+          </CardBody>
         </Card>
       </Paper>
     )
